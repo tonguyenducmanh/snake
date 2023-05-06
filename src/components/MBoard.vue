@@ -94,6 +94,7 @@ export default {
     }
     .m-tutorial-title{
         /* background-color: chartreuse; */
+        padding: var(--padding-common);
     }
     .m-tutorial-content{
         /* background-color: crimson; */

@@ -6,10 +6,17 @@
     <div class="m-game">
         <div class="m-fence" :style="gameSizeStyle">
             <!-- tạo ra bảng dựa vào kích thước của gameSize -->
-            <template v-for="index in gameSize" :key="index">
-                <template v-for="index in gameSize" :key="index">
-                    <div class="m-cube" ></div>
-                </template>
+            <template v-for="indexRow in gameSize" :key="indexRow">
+                    <template v-for="indexCol in gameSize" :key="indexCol">
+                        <div v-if="gameSize % 2 == 0" 
+                            class="m-cube" 
+                            :class="(indexRow == indexCol && indexRow == gameSize/2) ? 'm-cube-active': null"
+                        ></div>
+                        <div v-else 
+                            class="m-cube" 
+                            :class="(indexRow == indexCol && indexRow == Math.floor(gameSize/2) + 1) ? 'm-cube-active': null"
+                        ></div>
+                    </template>
             </template>
         </div>
     </div>
@@ -52,5 +59,8 @@ export default {
     .m-cube{
         display: flex;
         border: 1px solid rgba(255, 255, 255, 0.58);
+    }
+    .m-cube-active{
+        background-color: white;
     }
 </style>
