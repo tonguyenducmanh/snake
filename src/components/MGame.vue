@@ -51,7 +51,6 @@ export default {
     }
     .m-cube{
         display: flex;
-        background-color: white;
-        margin: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.58);
     }
 </style>
