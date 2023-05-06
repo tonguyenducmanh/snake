@@ -5,6 +5,7 @@
   font-family: roboto;
   box-sizing: border-box;
   --border-radius: 16px;
+  --padding-common: 10px;
 }
 
 #app {
