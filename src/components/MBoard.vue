@@ -7,47 +7,53 @@
       <div class="m-size-button" @click="gameSizeChange(true)">Up</div>
       <div class="m-size-button" @click="gameSizeChange(false)">Down</div>
     </div>
-    <div class="m-move">
-      <div class="m-move-title">Moves</div>
-      <div class="m-move-content">
-        <div class="m-move-item"></div>
-        <div class="m-move-item m-move-button">w</div>
-        <div class="m-move-item"></div>
-        <div class="m-move-item m-move-button">a</div>
-        <div class="m-move-item m-move-button">s</div>
-        <div class="m-move-item m-move-button">d</div>
+    <div class="m-move-content">
+      <div class="m-move-item"></div>
+      <div class="m-move-item m-move-button" @click="changePosition(gameConfig.position.up)">
+        &#8593;
+      </div>
+      <div class="m-move-item"></div>
+      <div class="m-move-item m-move-button" @click="changePosition(gameConfig.position.left)">
+        &#8592;
+      </div>
+      <div class="m-move-item m-move-button" @click="changePosition(gameConfig.position.down)">
+        &#8595;
+      </div>
+      <div class="m-move-item m-move-button" @click="changePosition(gameConfig.position.right)">
+        &#8594;
       </div>
     </div>
   </div>
 </template>
 <script>
+import gameConfig from '../config/gameConfig.js'
 export default {
   data() {
     return {
       score: 0, // điểm hiện tại của trò chơi
-      gameSize: 7, // kích cỡ của trò chơi hiện tại
-      maxGameSize: 15, // kích cỡ lớn nhất của game
-      minGameSize: 5 // kích cỡ nhỏ nhất của game
+      gameSize: gameConfig.gameSize.defaultSize, // kích cỡ của trò chơi hiện tại
+      gameConfig: gameConfig
     }
   },
   methods: {
     /**
      * method tăng, giảm size của game lên 1 đơn vị
+     * @author tdmanh1 09-05-2023
      */
     gameSizeChange(isIncrease) {
       let me = this
-      // thay đổi giá trị hiển thị trên thông tin
-      if (!isIncrease) {
-        if (me.gameSize > me.minGameSize) {
-          me.gameSize--
-        }
-      } else {
-        if (me.gameSize < me.maxGameSize) {
-          me.gameSize++
-        }
-      }
       // thay đổi giá trị của các ô trên màn hình game
       me.$emit('changeGameSize', isIncrease)
+    },
+    /**
+     * thay đổi vị trí của con rắn trên màn hình
+     * @author tdmanh1 09-05-2023
+     * @param value hướng di chuyển
+     */
+    changePosition(value) {
+      let me = this
+      // gọi sự kiện thay đổi vị trí
+      me.$emit('changePosition', value)
     }
   }
 }
@@ -71,23 +77,13 @@ export default {
   padding: 10px;
   font-weight: 600;
 }
-.m-move {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: var(--padding-common);
-  padding-bottom: var(--padding-common);
-}
-.m-move-title {
-  /* background-color: chartreuse; */
-  padding: var(--padding-common);
-}
 .m-move-content {
   /* background-color: crimson; */
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   height: 100px;
   width: 250px;
+  margin-bottom: calc(var(--padding-common) * 2);
 }
 .m-move-item {
   display: flex;

@@ -6,15 +6,16 @@
     </div>
     <div class="m-main">
       <!-- phần trò chơi -->
-      <m-game-vue :gameSize="emitGameSize" />
+      <m-game-vue :gameSize="emitGameSize" :currentPosition="currentPosition" />
       <!-- phần thông tin bên trái của trò chơi -->
-      <m-board-vue @changeGameSize="changeGameSize" />
+      <m-board-vue @changeGameSize="changeGameSize" @changePosition="changePosition" />
     </div>
   </div>
 </template>
 <script>
 import MBoardVue from './MBoard.vue'
 import MGameVue from './MGame.vue'
+import gameConfig from '../config/gameConfig.js'
 export default {
   components: {
     MBoardVue,
@@ -22,9 +23,8 @@ export default {
   },
   data() {
     return {
-      emitGameSize: 7, // gameSize được thay đổi
-      maxGameSize: 15, // kích cỡ lớn nhất của game
-      minGameSize: 5 // kích cỡ nhỏ nhất của game
+      emitGameSize: gameConfig.gameSize.defaultSize, // gameSize được thay đổi
+      currentPosition: null // hướng di chuyển hiện tại của con rắn
     }
   },
   methods: {
@@ -35,14 +35,18 @@ export default {
     changeGameSize(isIncrease) {
       let me = this
       if (!isIncrease) {
-        if (me.emitGameSize > me.minGameSize) {
+        if (me.emitGameSize > gameConfig.gameSize.minSize) {
           me.emitGameSize--
         }
       } else {
-        if (me.emitGameSize < me.maxGameSize) {
+        if (me.emitGameSize < gameConfig.gameSize.maxSize) {
           me.emitGameSize++
         }
       }
+    },
+    changePosition(value) {
+      let me = this
+      me.currentPosition = value
     }
   }
 }

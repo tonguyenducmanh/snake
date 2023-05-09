@@ -5,24 +5,32 @@
       <!-- tạo ra bảng dựa vào kích thước của gameSize -->
       <template v-for="tempRow in gameGrid" :key="tempRow">
         <template v-for="singleSquare in tempRow" :key="singleSquare">
-          <div class="m-cube" :class="singleSquare.colActive ? 'm-cube-active' : null"></div>
+          <div class="m-cube" :class="singleSquare.activeSquare ? 'm-cube-active' : null"></div>
         </template>
       </template>
     </div>
   </div>
 </template>
 <script>
+import gameConfig from '../config/gameConfig.js'
+import { isProxy, toRaw } from 'vue'
 export default {
   data() {
     return {
-      gameGrid: [] // mang luu cac o cua tro choi
+      gameGrid: [], // mảng lưu toàn bộ các ô có trong trò chơi
+      activeSquares: [] // mảng lưu danh sách các ô vuông sẽ active
     }
   },
   props: {
     // kích cỡ của trò chơi, mặc định là ô 7x7
     gameSize: {
       type: Number,
-      default: 7
+      default: gameConfig.gameSize.defaultSize
+    },
+    // hướng di chuyển hiện tại của con rắn
+    currentPosition: {
+      type: Number,
+      default: null
     }
   },
   computed: {
@@ -34,36 +42,155 @@ export default {
   },
   mounted() {
     let me = this
-    me.generateGameGrid()
+    me.generateGameGrid(true)
   },
   watch: {
+    /**
+     * tự động load lại danh sách mỗi lần thay đổi kích thước
+     * created by tdmanh1 09/05/2023
+     */
     gameSize() {
       let me = this
-      me.generateGameGrid()
+      // re-render lại grid mỗi lần bấm vào thay đổi kích thước
+      me.generateGameGrid(true)
+    },
+    /**
+     * lắng nghe khi vị trí thay đổi thì tiến hành thay đổi hướng di chuyển của con rắn
+     */
+    currentPosition(newValue, oldValue) {
+      let me = this
+      if (newValue && oldValue && newValue != oldValue) {
+        me.caculateNewPosition(newValue)
+      }
     }
   },
   methods: {
     /**
-     * tao ra bang game
+     * vue3 tự động biến array thành 1 object proxy array, dùng hàm này để convert lại về array
+     * @author tdmanh1 09-05-2023
+     * @param proxyArray array muốn convert
      */
-    generateGameGrid() {
+    getArrayFromProxyArr(proxyArray) {
+      if (proxyArray && isProxy(proxyArray)) {
+        return toRaw(proxyArray)
+      } else {
+        return proxyArray
+      }
+    },
+    /**
+     * tạo ra bảng game dựa vào dữ liệu truyền vào
+     * @author tdmanh1 09-05-2023
+     * @param isClear : có muốn xóa toàn bộ dữ liệu đi không
+     */
+    generateGameGrid(isClear) {
       let me = this
       if (me.gameSize) {
-        // tinh toan tong so o vuong
-        me.gameGrid = []
-        for (let i = 0; i < me.gameSize; i++) {
-          // tao ra bang tam luu 1 dong cua game
-          let tempRow = []
-          for (let k = 0; k < me.gameSize; k++) {
-            // tao ra 1 o vuong
-            let singleSquare = {
-              colActive: false
-            }
-            tempRow.push(singleSquare)
-          }
-          // them 1 dong vao mang de render
-          me.gameGrid.push(tempRow)
+        // nếu là clear đi thì reset toàn bộ các biến trong chương trình
+        if (isClear) {
+          me.gameGrid = []
+          me.activeSquares = []
+          // tạo ra 1 ô active ngẫu nhiên
+          me.activeSquares.push(me.randomSquare())
         }
+        me.renderGameGrid()
+      }
+    },
+    /**
+     * tạo ra ô random muốn active hoặc tô màu
+     * @author tdmanh1 09-05-2023
+     */
+    randomSquare() {
+      let me = this
+      // mặc định sẽ là ô trên cùng bên trái
+      let result = [0, 0]
+      if (me.gameSize) {
+        let xRandom = Math.floor(Math.random() * me.gameSize)
+        let yRandom = Math.floor(Math.random() * me.gameSize)
+        result = { x: xRandom, y: yRandom }
+      }
+      return result
+    },
+    /**
+     * ô cần check có đúng tọa độ không
+     * @author tdmanh1 09-05-2023
+     * @param coordinate : tọa độ cần kiểm tra
+     */
+    checkIncludeSquare(coordinate) {
+      let me = this
+      // kiểm tra xem ô vuông hiện tại có cần active không
+      let result = false
+      let activeSquares = me.getArrayFromProxyArr(me.activeSquares)
+      if (
+        coordinate &&
+        coordinate.x != null &&
+        coordinate.x != undefined &&
+        coordinate.y != null &&
+        coordinate.y != undefined &&
+        activeSquares &&
+        activeSquares.length > 0 &&
+        activeSquares.filter((element) => element.x == coordinate.x && element.y == coordinate.y)
+          .length > 0
+      ) {
+        result = true
+      }
+      return result
+    },
+    /**
+     * thực hiện render ra màn hình game
+     * @author tdmanh1 09-05-2023
+     * @param activeSquares : mảng các ô vuông mong muốn sẽ hiển thị
+     */
+    renderGameGrid() {
+      let me = this
+      // reset gameGrid
+      me.gameGrid = []
+      for (let i = 0; i < me.gameSize; i++) {
+        // tao ra bang tam luu 1 dong cua game
+        let tempRow = []
+        for (let k = 0; k < me.gameSize; k++) {
+          // kiểm tra xem ô này có cần active không
+          let tempActiveSquare = me.checkIncludeSquare({ x: i, y: k })
+          // tạo ra 1 ô vuông
+          let singleSquare = {
+            activeSquare: tempActiveSquare
+          }
+          tempRow.push(singleSquare)
+        }
+        // them 1 dong vao mang de render
+        me.gameGrid.push(tempRow)
+      }
+    },
+    /**
+     * thay đổi vị trí các ô hiển thị trên màn hình
+     * @author tdmanh1 09-05-2023
+     * @param newPosition vị trí mới mong muốn hiển thị
+     */
+    caculateNewPosition(newPosition) {
+      let me = this
+      let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares)
+      if (newPosition && oldActiveSquares && oldActiveSquares.length > 0) {
+        // tính toán lại vị trí từng thành phần trong mảng
+        oldActiveSquares.forEach((element) => {
+          switch (newPosition) {
+            // di chuyển lên
+            case gameConfig.position.up:
+              return element.x--, element.y
+            // di chuyển sang trái
+            case gameConfig.position.left:
+              return element.x, element.y--
+            // di chuyển xuống dưới
+            case gameConfig.position.down:
+              return element.x++, element.y
+            // di chuyển sang phải
+            case gameConfig.position.right:
+              return element.x, element.y++
+            default:
+              break
+          }
+        })
+        me.activeSquares = oldActiveSquares
+        // render lại game theo active mới
+        me.renderGameGrid()
       }
     }
   }
