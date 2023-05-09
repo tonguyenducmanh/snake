@@ -3,22 +3,9 @@
   <div class="m-game">
     <div class="m-fence" :style="gameSizeStyle">
       <!-- tạo ra bảng dựa vào kích thước của gameSize -->
-      <template v-for="indexRow in gameSize" :key="indexRow">
-        <template v-for="indexCol in gameSize" :key="indexCol">
-          <div
-            v-if="gameSize % 2 == 0"
-            class="m-cube"
-            :class="indexRow == indexCol && indexRow == gameSize / 2 ? 'm-cube-active' : null"
-          ></div>
-          <div
-            v-else
-            class="m-cube"
-            :class="
-              indexRow == indexCol && indexRow == Math.floor(gameSize / 2) + 1
-                ? 'm-cube-active'
-                : null
-            "
-          ></div>
+      <template v-for="tempRow in gameGrid" :key="tempRow">
+        <template v-for="singleSquare in tempRow" :key="singleSquare">
+          <div class="m-cube" :class="singleSquare.colActive ? 'm-cube-active' : null"></div>
         </template>
       </template>
     </div>
@@ -26,6 +13,11 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      gameGrid: [] // mang luu cac o cua tro choi
+    }
+  },
   props: {
     // kích cỡ của trò chơi, mặc định là ô 7x7
     gameSize: {
@@ -37,6 +29,41 @@ export default {
     gameSizeStyle() {
       return {
         'grid-template-columns': `repeat(${this.gameSize}, 1fr)`
+      }
+    }
+  },
+  mounted() {
+    let me = this
+    me.generateGameGrid()
+  },
+  watch: {
+    gameSize() {
+      let me = this
+      me.generateGameGrid()
+    }
+  },
+  methods: {
+    /**
+     * tao ra bang game
+     */
+    generateGameGrid() {
+      let me = this
+      if (me.gameSize) {
+        // tinh toan tong so o vuong
+        me.gameGrid = []
+        for (let i = 0; i < me.gameSize; i++) {
+          // tao ra bang tam luu 1 dong cua game
+          let tempRow = []
+          for (let k = 0; k < me.gameSize; k++) {
+            // tao ra 1 o vuong
+            let singleSquare = {
+              colActive: false
+            }
+            tempRow.push(singleSquare)
+          }
+          // them 1 dong vao mang de render
+          me.gameGrid.push(tempRow)
+        }
       }
     }
   }
