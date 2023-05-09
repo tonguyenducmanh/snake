@@ -1,7 +1,7 @@
 # snake-vuejs
 
 game rắn săn mồi đơn giản được viết bằng vuejs
-[link](https://ducnanh-sneak-vuejs.netlify.app)
+[link](https://ducmanh-sneak-vuejs.netlify.app)
 
 # demo
 
