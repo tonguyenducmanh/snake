@@ -168,26 +168,68 @@ export default {
     caculateNewPosition(newPosition) {
       let me = this
       let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares)
-      if (newPosition && oldActiveSquares && oldActiveSquares.length > 0) {
+      if (newPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
         // tính toán lại vị trí từng thành phần trong mảng
-        oldActiveSquares.forEach((element) => {
+        // lay gia tri dau tien cuoi cung trong mang va cho vao vi tri cuoi cung (moi nhat
+        let tempActiveSquare = oldActiveSquares[0]
+        // xoa o dau tien di
+        oldActiveSquares.shift()
+        if (tempActiveSquare) {
           switch (newPosition) {
             // di chuyển lên
             case gameConfig.position.up:
-              return element.x--, element.y
+              if (
+                tempActiveSquare.x != null &&
+                tempActiveSquare.x != undefined &&
+                tempActiveSquare.x > 0
+              ) {
+                tempActiveSquare.x--
+              } else {
+                tempActiveSquare.x = me.gameSize - 1
+              }
+              break
             // di chuyển sang trái
             case gameConfig.position.left:
-              return element.x, element.y--
+              if (
+                tempActiveSquare.y != null &&
+                tempActiveSquare.y != undefined &&
+                tempActiveSquare.y > 0
+              ) {
+                tempActiveSquare.y--
+              } else {
+                tempActiveSquare.y = me.gameSize - 1
+              }
+              break
             // di chuyển xuống dưới
             case gameConfig.position.down:
-              return element.x++, element.y
+              if (
+                tempActiveSquare.x != null &&
+                tempActiveSquare.x != undefined &&
+                tempActiveSquare.x < me.gameSize - 1
+              ) {
+                tempActiveSquare.x++
+              } else {
+                tempActiveSquare.x = 0
+              }
+              break
             // di chuyển sang phải
             case gameConfig.position.right:
-              return element.x, element.y++
+              if (
+                tempActiveSquare.y != null &&
+                tempActiveSquare.y != undefined &&
+                tempActiveSquare.y < me.gameSize - 1
+              ) {
+                tempActiveSquare.y++
+              } else {
+                tempActiveSquare.y = 0
+              }
+              break
             default:
               break
           }
-        })
+        }
+        // them gia tri vua thay doi vao cuoi cung cua mang
+        oldActiveSquares.push(tempActiveSquare)
         me.activeSquares = oldActiveSquares
         // render lại game theo active mới
         me.renderGameGrid()
