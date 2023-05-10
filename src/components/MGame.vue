@@ -8,7 +8,16 @@
       <!-- tạo ra bảng dựa vào kích thước của gameSize -->
       <template v-for="tempRow in gameGrid" :key="tempRow">
         <template v-for="singleSquare in tempRow" :key="singleSquare">
-          <div class="m-cube" :class="singleSquare.activeSquare ? 'm-cube-active' : null"></div>
+          <div
+            v-if="singleSquare.eatingSquare"
+            class="m-cube"
+            :class="singleSquare.eatingSquare ? 'm-cube-eating' : null"
+          ></div>
+          <div
+            v-else
+            class="m-cube"
+            :class="singleSquare.activeSquare ? 'm-cube-active' : null"
+          ></div>
         </template>
       </template>
     </div>
@@ -22,6 +31,7 @@ export default {
     return {
       gameGrid: [], // mảng lưu toàn bộ các ô có trong trò chơi
       activeSquares: [], // mảng lưu danh sách các ô vuông sẽ active
+      eatingSquare: { x: 0, y: 0 }, // object lưu ô màu đỏ để rắn săn mồi ăn
       movingPosition: gameConfig.position.right, // bien luu huong di chuyen hien tai
       intervalRendering: null, // render lien tuc tu khi mouted
       isPaused: false // trạng thái của game là tạm dừng hay không
@@ -45,6 +55,10 @@ export default {
     }
   },
   computed: {
+    /**
+     * tạo ra grid động
+     * @author tdmanh1 10-05-2023
+     */
     gameSizeStyle() {
       return {
         'grid-template-columns': `repeat(${this.gameSize}, 1fr)`
@@ -154,6 +168,8 @@ export default {
           me.activeSquares = []
           // tạo ra 1 ô active ngẫu nhiên
           me.activeSquares.push(me.randomSquare())
+          // tạo ra ô rắn săn mồi ngẫu nhiên
+          me.eatingSquare = me.randomSquare()
         }
         me.renderGameGrid()
       }
@@ -178,11 +194,11 @@ export default {
      * @author tdmanh1 09-05-2023
      * @param coordinate : tọa độ cần kiểm tra
      */
-    checkIncludeSquare(coordinate) {
+    checkIncludeSquare(testSquares, coordinate) {
       let me = this
       // kiểm tra xem ô vuông hiện tại có cần active không
       let result = false
-      let activeSquares = me.getArrayFromProxyArr(me.activeSquares)
+      let activeSquares = me.getArrayFromProxyArr(testSquares)
       if (
         coordinate &&
         coordinate.x != null &&
@@ -212,10 +228,14 @@ export default {
         let tempRow = []
         for (let k = 0; k < me.gameSize; k++) {
           // kiểm tra xem ô này có cần active không
-          let tempActiveSquare = me.checkIncludeSquare({ x: i, y: k })
+          let tempActiveSquare = me.checkIncludeSquare(me.activeSquares, { x: i, y: k })
+          // kiểm tra xem ô hiện tại có phải là ô màu đỏ ( rắn săn mồi sẽ ăn ô này)
+          let tempEatingSquare =
+            me.eatingSquare && me.eatingSquare.x == i && me.eatingSquare.y == k ? true : false
           // tạo ra 1 ô vuông
           let singleSquare = {
-            activeSquare: tempActiveSquare
+            activeSquare: tempActiveSquare,
+            eatingSquare: tempEatingSquare
           }
           tempRow.push(singleSquare)
         }
@@ -325,6 +345,9 @@ export default {
 }
 .m-cube-active {
   background-color: white;
+}
+.m-cube-eating {
+  background-color: rgb(255, 0, 0);
 }
 .m-pause {
   opacity: 0;
