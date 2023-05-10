@@ -1,6 +1,9 @@
 /** màn hình trò chơi created by tdmanh1 06/05/2023 */
 <template>
-  <div class="m-game">
+  <div class="m-game" @click="pauseGame">
+    <!-- màn hình tạm dừng -->
+    <div class="m-pause" :class="isPaused ? 'm-pause-active' : null"><div>Paused</div></div>
+    <!-- màn hình game -->
     <div class="m-fence" :style="gameSizeStyle">
       <!-- tạo ra bảng dựa vào kích thước của gameSize -->
       <template v-for="tempRow in gameGrid" :key="tempRow">
@@ -21,7 +24,7 @@ export default {
       activeSquares: [], // mảng lưu danh sách các ô vuông sẽ active
       movingPosition: gameConfig.position.right, // bien luu huong di chuyen hien tai
       intervalRendering: null, // render lien tuc tu khi mouted
-      timeRerender: 500 // thoi gian render lai 1 frame
+      isPaused: false // trạng thái của game là tạm dừng hay không
     }
   },
   props: {
@@ -29,6 +32,11 @@ export default {
     gameSize: {
       type: Number,
       default: gameConfig.gameSize.defaultSize
+    },
+    //speed của game
+    gameSpeed: {
+      type: Number,
+      default: gameConfig.timeRerender.defaultSpeed
     },
     // hướng di chuyển hiện tại của con rắn
     currentPosition: {
@@ -50,9 +58,7 @@ export default {
   mounted() {
     let me = this
     me.generateGameGrid(true)
-    me.intervalRendering = setInterval(() => {
-      me.caculateNewPosition()
-    }, me.timeRerender)
+    me.changeIntervalGame(true)
   },
   /**
    * clear cac su kien duoc mount vao dom
@@ -60,7 +66,7 @@ export default {
    */
   beforeUnmount() {
     let me = this
-    clearInterval(me.intervalRendering)
+    me.changeIntervalGame()
   },
   watch: {
     /**
@@ -82,9 +88,46 @@ export default {
         me.movingPosition = newValue
         // me.caculateNewPosition()
       }
+    },
+    /**
+     * thay đổi tốc độ game
+     */
+    gameSpeed() {
+      let me = this
+      me.changeIntervalGame(true)
     }
   },
   methods: {
+    /**
+     * hàm chung xóa và thêm interval
+     * @author tdmanh1 10-05-2023
+     */
+    changeIntervalGame(reset) {
+      let me = this
+      clearInterval(me.intervalRendering)
+      if (reset) {
+        me.intervalRendering = setInterval(() => {
+          me.caculateNewPosition()
+        }, me.gameSpeed)
+      }
+    },
+    /**
+     * thực hiện tạm dừng game
+     * @author tdmanh1 10-05-2023
+     */
+    pauseGame() {
+      let me = this
+      // thay đổi trạng thái của game
+      if (me.isPaused != null && me.isPaused != undefined) {
+        me.isPaused = !me.isPaused
+      }
+      // thực hiện tạm dừng hoặc tiếp tục game
+      if (me.isPaused) {
+        me.changeIntervalGame()
+      } else {
+        me.changeIntervalGame(true)
+      }
+    },
     /**
      * vue3 tự động biến array thành 1 object proxy array, dùng hàm này để convert lại về array
      * @author tdmanh1 09-05-2023
@@ -265,6 +308,7 @@ export default {
   width: 100%;
   border-radius: var(--border-radius);
   padding: var(--padding-common);
+  position: relative;
 }
 .m-fence {
   width: 100%;
@@ -281,5 +325,23 @@ export default {
 }
 .m-cube-active {
   background-color: white;
+}
+.m-pause {
+  opacity: 0;
+  color: white;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+.m-pause-active {
+  opacity: 1;
+  background-color: rgba(106, 106, 106, 0.334);
 }
 </style>

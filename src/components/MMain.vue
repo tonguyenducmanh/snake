@@ -6,9 +6,17 @@
     </div>
     <div class="m-main">
       <!-- phần trò chơi -->
-      <m-game-vue :gameSize="emitGameSize" :currentPosition="currentPosition" />
-      <!-- phần thông tin bên trái của trò chơi -->
-      <m-board-vue @changeGameSize="changeGameSize" @changePosition="changePosition" />
+      <m-game-vue
+        :gameSize="emitGameSize"
+        :currentPosition="currentPosition"
+        :gameSpeed="emitGameSpeed"
+      />
+      <!-- phần thông tin bên dưới của trò chơi -->
+      <m-board-vue
+        @changeGameSize="changeGameSize"
+        @changePosition="changePosition"
+        @changeGameSpeed="changeGameSpeed"
+      />
     </div>
   </div>
 </template>
@@ -24,10 +32,27 @@ export default {
   data() {
     return {
       emitGameSize: gameConfig.gameSize.defaultSize, // gameSize được thay đổi
+      emitGameSpeed: gameConfig.timeRerender.defaultSpeed, // gameSize được thay đổi
       currentPosition: null // hướng di chuyển hiện tại của con rắn
     }
   },
   methods: {
+    /**
+     * sự kiện thay đổi gameSpeed
+     * created by tdmanh1 06/05/2023
+     */
+    changeGameSpeed(isIncrease) {
+      let me = this
+      if (!isIncrease) {
+        if (me.emitGameSpeed > gameConfig.timeRerender.maxSpeed) {
+          me.emitGameSpeed -= 20
+        }
+      } else {
+        if (me.emitGameSpeed < gameConfig.timeRerender.minSpeed) {
+          me.emitGameSpeed += 20
+        }
+      }
+    },
     /**
      * sự kiện thay đổi gamesize được emit từ bảng thông tin lên
      * created by tdmanh1 06/05/2023
@@ -71,7 +96,7 @@ export default {
 }
 .m-header {
   /* background-color: burlywood; */
-  height: 100px;
+  height: 50px;
   font-size: 2rem;
   text-transform: uppercase;
   display: flex;

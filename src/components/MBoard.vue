@@ -7,6 +7,11 @@
       <div class="m-size-button" @click="gameSizeChange(true)">Up</div>
       <div class="m-size-button" @click="gameSizeChange(false)">Down</div>
     </div>
+    <div class="m-size">
+      <div class="m-size-tile">Speed</div>
+      <div class="m-size-button" @click="gameSpeedChange(false)">Up</div>
+      <div class="m-size-button" @click="gameSpeedChange(true)">Down</div>
+    </div>
     <div class="m-move-content">
       <div class="m-move-item"></div>
       <div class="m-move-item m-move-button" @click="changePosition(gameConfig.position.up)">
@@ -55,6 +60,15 @@ export default {
       // thay đổi giá trị của các ô trên màn hình game
       me.$emit('changeGameSize', isIncrease)
     },
+    /**
+     * method tăng, giảm speed của game
+     * @author tdmanh1 10-05-2023
+     */
+    gameSpeedChange(isIncrease) {
+      let me = this
+      me.$emit('changeGameSpeed', isIncrease)
+    },
+
     /**
      * thay đổi vị trí của con rắn trên màn hình
      * @author tdmanh1 09-05-2023

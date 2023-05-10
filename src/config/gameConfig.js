@@ -11,5 +11,11 @@ export default {
     left: 2, // trái
     down: 3, // dưới
     right: 4 // phải
+  },
+  // thời gian refresh lại màn hình
+  timeRerender: {
+    defaultSpeed: 100, // thời gian mặc định
+    minSpeed: 200, // thời gian chậm nhất
+    maxSpeed: 40 // thời gian nhanh nhất
   }
 }
