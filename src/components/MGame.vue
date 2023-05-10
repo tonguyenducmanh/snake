@@ -170,8 +170,8 @@ export default {
       let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares)
       if (newPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
         // tính toán lại vị trí từng thành phần trong mảng
-        // lay gia tri dau tien cuoi cung trong mang va cho vao vi tri cuoi cung (moi nhat
-        let tempActiveSquare = oldActiveSquares[0]
+        // lay gia tri cuoi cung trong mang va cho vao vi tri cuoi cung (moi nhat)
+        let tempActiveSquare = oldActiveSquares[oldActiveSquares.length - 1]
         // xoa o dau tien di
         oldActiveSquares.shift()
         if (tempActiveSquare) {
