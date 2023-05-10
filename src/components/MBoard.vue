@@ -42,6 +42,16 @@ export default {
      */
     gameSizeChange(isIncrease) {
       let me = this
+      // thay doi gia tri hien thi game size
+      if (!isIncrease) {
+        if (me.gameSize > gameConfig.gameSize.minSize) {
+          me.gameSize--
+        }
+      } else {
+        if (me.gameSize < gameConfig.gameSize.maxSize) {
+          me.gameSize++
+        }
+      }
       // thay đổi giá trị của các ô trên màn hình game
       me.$emit('changeGameSize', isIncrease)
     },
