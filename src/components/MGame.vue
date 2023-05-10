@@ -312,25 +312,26 @@ export default {
               break
           }
         }
-        // kiểm tra xem ô tiếp theo là ô ăn hay không
-        // nếu là ô ăn thì không xóa ô cuối cùng đi
-        if (
-          tempActiveSquare &&
-          me.eatingSquare &&
-          tempActiveSquare.x == me.eatingSquare.x &&
-          tempActiveSquare.y == me.eatingSquare.y
-        ) {
-          // tạo ra ô rắn săn mồi ngẫu nhiên mới
-          me.eatingSquare = me.randomSquare()
-        } else {
-          // xóa ô đầu tiên đi nếu không ăn được thêm ô nào
-          oldActiveSquares.shift()
-        }
         // kiểm tra xem ô temp này có nằm trong mảng có sẵn không
         // nếu có thì endgame không thì render tiếp
         if (me.checkIncludeSquare(oldActiveSquares, tempActiveSquare)) {
           me.generateGameGrid(true)
         } else {
+          // kiểm tra xem ô tiếp theo là ô ăn hay không
+          // nếu là ô ăn thì không xóa ô cuối cùng đi
+          if (
+            tempActiveSquare &&
+            me.eatingSquare &&
+            tempActiveSquare.x == me.eatingSquare.x &&
+            tempActiveSquare.y == me.eatingSquare.y
+          ) {
+            // tạo ra ô rắn săn mồi ngẫu nhiên mới
+            me.eatingSquare = me.randomSquare()
+          } else {
+            // xóa ô đầu tiên đi nếu không ăn được thêm ô nào
+            oldActiveSquares.shift()
+          }
+
           // thêm giá trị vừa thay đổi vào ô cuối cùng của mảng
           oldActiveSquares.push(tempActiveSquare)
           me.activeSquares = oldActiveSquares
