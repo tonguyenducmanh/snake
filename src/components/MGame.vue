@@ -363,7 +363,7 @@ export default {
 }
 .m-cube {
   display: flex;
-  border: 1px solid rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 .m-cube-active {
   background-color: white;
