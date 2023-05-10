@@ -25,7 +25,7 @@
 </template>
 <script>
 import gameConfig from '../config/gameConfig.js'
-import { isProxy, toRaw } from 'vue'
+import { isProxy } from 'vue'
 export default {
   data() {
     return {
@@ -149,7 +149,9 @@ export default {
      */
     getArrayFromProxyArr(proxyArray) {
       if (proxyArray && isProxy(proxyArray)) {
-        return toRaw(proxyArray)
+        // không dùng toRaw vì toRaw vẫn chỉ là tham chiếu tới proxy array của vue3, gây ra thay đổi dữ liệu của
+        // 1 biến copy từ item trong array gây ra thay đổi dữ liệu của chính array đó
+        return JSON.parse(JSON.stringify(proxyArray))
       } else {
         return proxyArray
       }
@@ -251,12 +253,11 @@ export default {
     caculateNewPosition() {
       let me = this
       let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares)
+      let temp = me.getArrayFromProxyArr(me.activeSquares)
       if (me.movingPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
         // tính toán lại vị trí từng thành phần trong mảng
-        // lay gia tri cuoi cung trong mang va cho vao vi tri cuoi cung (moi nhat)
-        let tempActiveSquare = oldActiveSquares[oldActiveSquares.length - 1]
-        // xoa o dau tien di
-        oldActiveSquares.shift()
+        // lấy ra giá trị cuối cùng
+        let tempActiveSquare = temp[temp.length - 1]
         if (tempActiveSquare) {
           switch (me.movingPosition) {
             // di chuyển lên
@@ -311,11 +312,31 @@ export default {
               break
           }
         }
-        // them gia tri vua thay doi vao cuoi cung cua mang
-        oldActiveSquares.push(tempActiveSquare)
-        me.activeSquares = oldActiveSquares
-        // render lại game theo active mới
-        me.renderGameGrid()
+        // kiểm tra xem ô tiếp theo là ô ăn hay không
+        // nếu là ô ăn thì không xóa ô cuối cùng đi
+        if (
+          tempActiveSquare &&
+          me.eatingSquare &&
+          tempActiveSquare.x == me.eatingSquare.x &&
+          tempActiveSquare.y == me.eatingSquare.y
+        ) {
+          // tạo ra ô rắn săn mồi ngẫu nhiên mới
+          me.eatingSquare = me.randomSquare()
+        } else {
+          // xóa ô đầu tiên đi nếu không ăn được thêm ô nào
+          oldActiveSquares.shift()
+        }
+        // kiểm tra xem ô temp này có nằm trong mảng có sẵn không
+        // nếu có thì endgame không thì render tiếp
+        if (me.checkIncludeSquare(oldActiveSquares, tempActiveSquare)) {
+          me.generateGameGrid(true)
+        } else {
+          // thêm giá trị vừa thay đổi vào ô cuối cùng của mảng
+          oldActiveSquares.push(tempActiveSquare)
+          me.activeSquares = oldActiveSquares
+          // render lại game theo active mới
+          me.renderGameGrid()
+        }
       }
     }
   }
