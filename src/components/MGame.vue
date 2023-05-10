@@ -257,7 +257,8 @@ export default {
       if (me.movingPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
         // tính toán lại vị trí từng thành phần trong mảng
         // lấy ra giá trị cuối cùng
-        let tempActiveSquare = temp[temp.length - 1]
+        // json parse vaf json stringify de clone object thay vi reference
+        let tempActiveSquare = JSON.parse(JSON.stringify(temp[temp.length - 1])
         if (tempActiveSquare) {
           switch (me.movingPosition) {
             // di chuyển lên
