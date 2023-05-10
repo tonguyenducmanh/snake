@@ -258,7 +258,7 @@ export default {
         // tính toán lại vị trí từng thành phần trong mảng
         // lấy ra giá trị cuối cùng
         // json parse vaf json stringify de clone object thay vi reference
-        let tempActiveSquare = JSON.parse(JSON.stringify(temp[temp.length - 1])
+        let tempActiveSquare = JSON.parse(JSON.stringify(temp[temp.length - 1]))
         if (tempActiveSquare) {
           switch (me.movingPosition) {
             // di chuyển lên
