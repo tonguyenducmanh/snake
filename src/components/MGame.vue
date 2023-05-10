@@ -252,7 +252,7 @@ export default {
      */
     caculateNewPosition() {
       let me = this
-      let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares)
+      let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares))
       let temp = me.getArrayFromProxyArr(me.activeSquares)
       if (me.movingPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
         // tính toán lại vị trí từng thành phần trong mảng
