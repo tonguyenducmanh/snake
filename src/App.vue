@@ -1,15 +1,14 @@
 <script>
-import MMainVue from "./components/MMain.vue";
-export default{
-  components:{
+import MMainVue from './components/MMain.vue'
+export default {
+  components: {
     MMainVue
   }
 }
 </script>
 
 <template>
-  <MMainVue/>
+  <MMainVue />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
