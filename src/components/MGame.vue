@@ -18,7 +18,10 @@ export default {
   data() {
     return {
       gameGrid: [], // mảng lưu toàn bộ các ô có trong trò chơi
-      activeSquares: [] // mảng lưu danh sách các ô vuông sẽ active
+      activeSquares: [], // mảng lưu danh sách các ô vuông sẽ active
+      movingPosition: gameConfig.position.right, // bien luu huong di chuyen hien tai
+      intervalRendering: null, // render lien tuc tu khi mouted
+      timeRerender: 500 // thoi gian render lai 1 frame
     }
   },
   props: {
@@ -40,9 +43,24 @@ export default {
       }
     }
   },
+  /**
+   * them su kien khi mouted
+   * @author tdmanh1 10-05-2023
+   */
   mounted() {
     let me = this
     me.generateGameGrid(true)
+    me.intervalRendering = setInterval(() => {
+      me.caculateNewPosition()
+    }, me.timeRerender)
+  },
+  /**
+   * clear cac su kien duoc mount vao dom
+   * @author tdmanh1 10-05-2023
+   */
+  beforeUnmount() {
+    let me = this
+    clearInterval(me.intervalRendering)
   },
   watch: {
     /**
@@ -56,11 +74,13 @@ export default {
     },
     /**
      * lắng nghe khi vị trí thay đổi thì tiến hành thay đổi hướng di chuyển của con rắn
+     * @author tdmanh1 10-05-2023
      */
-    currentPosition(newValue, oldValue) {
+    currentPosition(newValue) {
       let me = this
-      if (newValue && oldValue && newValue != oldValue) {
-        me.caculateNewPosition(newValue)
+      if (newValue) {
+        me.movingPosition = newValue
+        // me.caculateNewPosition()
       }
     }
   },
@@ -165,17 +185,17 @@ export default {
      * @author tdmanh1 09-05-2023
      * @param newPosition vị trí mới mong muốn hiển thị
      */
-    caculateNewPosition(newPosition) {
+    caculateNewPosition() {
       let me = this
       let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares)
-      if (newPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
+      if (me.movingPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
         // tính toán lại vị trí từng thành phần trong mảng
         // lay gia tri cuoi cung trong mang va cho vao vi tri cuoi cung (moi nhat)
         let tempActiveSquare = oldActiveSquares[oldActiveSquares.length - 1]
         // xoa o dau tien di
         oldActiveSquares.shift()
         if (tempActiveSquare) {
-          switch (newPosition) {
+          switch (me.movingPosition) {
             // di chuyển lên
             case gameConfig.position.up:
               if (
