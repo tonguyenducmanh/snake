@@ -94,13 +94,22 @@ export default {
     },
     /**
      * lắng nghe khi vị trí thay đổi thì tiến hành thay đổi hướng di chuyển của con rắn
+     * ngan chan viec di chuyen vi pham vd nhu tu tren chuyen huong quay xuong duoi hoac tu trai chuyen huong quay sang phai
      * @author tdmanh1 10-05-2023
      */
-    currentPosition(newValue) {
+    currentPosition(newValue, oldValue) {
       let me = this
-      if (newValue) {
+      if (
+        newValue &&
+        oldValue &&
+        ((newValue == gameConfig.position.up && oldValue != gameConfig.position.down) ||
+          (newValue == gameConfig.position.down && oldValue != gameConfig.position.up) ||
+          (newValue == gameConfig.position.left && oldValue != gameConfig.position.right) ||
+          (newValue == gameConfig.position.right && oldValue != gameConfig.position.left))
+      ) {
         me.movingPosition = newValue
-        // me.caculateNewPosition()
+      } else {
+        me.movingPosition = oldValue
       }
     },
     /**
