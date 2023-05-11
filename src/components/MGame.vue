@@ -2,7 +2,10 @@
 <template>
   <div class="m-game" @click="pauseGame">
     <!-- màn hình tạm dừng -->
-    <div class="m-pause" :class="isPaused ? 'm-pause-active' : null"><div>Paused</div></div>
+    <div class="m-pause" :class="isPaused ? 'm-pause-active' : null">
+      <div v-if="isGameOver">Game over</div>
+      <div v-else>Paused</div>
+    </div>
     <!-- màn hình game -->
     <div class="m-fence" :style="gameSizeStyle">
       <!-- tạo ra bảng dựa vào kích thước của gameSize -->
@@ -34,7 +37,8 @@ export default {
       eatingSquare: { x: 0, y: 0 }, // object lưu ô màu đỏ để rắn săn mồi ăn
       movingPosition: gameConfig.position.right, // bien luu huong di chuyen hien tai
       intervalRendering: null, // render lien tuc tu khi mouted
-      isPaused: false // trạng thái của game là tạm dừng hay không
+      isPaused: false, // trạng thái của game là tạm dừng hay không
+      isGameOver: false // trang thai cua game la ket thuc hay khong
     }
   },
   props: {
@@ -140,6 +144,10 @@ export default {
      */
     pauseGame() {
       let me = this
+      //neu dang la game over thi bo no di
+      if (me.isGameOver) {
+        me.isGameOver = false
+      }
       // thay đổi trạng thái của game
       if (me.isPaused != null && me.isPaused != undefined) {
         me.isPaused = !me.isPaused
@@ -274,6 +282,9 @@ export default {
         // nếu có thì endgame không thì render tiếp
         if (me.checkIncludeSquare(oldActiveSquares, newActiveSquare)) {
           me.generateGameGrid(true)
+          // set trang thai game la isGameOver = true
+          me.pauseGame()
+          me.isGameOver = true
         } else {
           // kiểm tra xem ô tiếp theo là ô ăn hay không
           // nếu là ô ăn thì không xóa ô cuối cùng đi
