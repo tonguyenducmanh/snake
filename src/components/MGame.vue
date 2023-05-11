@@ -252,79 +252,27 @@ export default {
      */
     caculateNewPosition() {
       let me = this
-      let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares))
+      let oldActiveSquares = me.getArrayFromProxyArr(me.activeSquares)
       let temp = me.getArrayFromProxyArr(me.activeSquares)
       if (me.movingPosition && oldActiveSquares && oldActiveSquares.length > 0 && me.gameSize) {
         // tính toán lại vị trí từng thành phần trong mảng
         // lấy ra giá trị cuối cùng
         // json parse vaf json stringify de clone object thay vi reference
         let tempActiveSquare = JSON.parse(JSON.stringify(temp[temp.length - 1]))
-        if (tempActiveSquare) {
-          switch (me.movingPosition) {
-            // di chuyển lên
-            case gameConfig.position.up:
-              if (
-                tempActiveSquare.x != null &&
-                tempActiveSquare.x != undefined &&
-                tempActiveSquare.x > 0
-              ) {
-                tempActiveSquare.x--
-              } else {
-                tempActiveSquare.x = me.gameSize - 1
-              }
-              break
-            // di chuyển sang trái
-            case gameConfig.position.left:
-              if (
-                tempActiveSquare.y != null &&
-                tempActiveSquare.y != undefined &&
-                tempActiveSquare.y > 0
-              ) {
-                tempActiveSquare.y--
-              } else {
-                tempActiveSquare.y = me.gameSize - 1
-              }
-              break
-            // di chuyển xuống dưới
-            case gameConfig.position.down:
-              if (
-                tempActiveSquare.x != null &&
-                tempActiveSquare.x != undefined &&
-                tempActiveSquare.x < me.gameSize - 1
-              ) {
-                tempActiveSquare.x++
-              } else {
-                tempActiveSquare.x = 0
-              }
-              break
-            // di chuyển sang phải
-            case gameConfig.position.right:
-              if (
-                tempActiveSquare.y != null &&
-                tempActiveSquare.y != undefined &&
-                tempActiveSquare.y < me.gameSize - 1
-              ) {
-                tempActiveSquare.y++
-              } else {
-                tempActiveSquare.y = 0
-              }
-              break
-            default:
-              break
-          }
-        }
+        // tinh toan vi tri moi
+        let newActiveSquare = me.manipulateCoordinate(tempActiveSquare)
         // kiểm tra xem ô temp này có nằm trong mảng có sẵn không
         // nếu có thì endgame không thì render tiếp
-        if (me.checkIncludeSquare(oldActiveSquares, tempActiveSquare)) {
+        if (me.checkIncludeSquare(oldActiveSquares, newActiveSquare)) {
           me.generateGameGrid(true)
         } else {
           // kiểm tra xem ô tiếp theo là ô ăn hay không
           // nếu là ô ăn thì không xóa ô cuối cùng đi
           if (
-            tempActiveSquare &&
+            newActiveSquare &&
             me.eatingSquare &&
-            tempActiveSquare.x == me.eatingSquare.x &&
-            tempActiveSquare.y == me.eatingSquare.y
+            newActiveSquare.x == me.eatingSquare.x &&
+            newActiveSquare.y == me.eatingSquare.y
           ) {
             // tạo ra ô rắn săn mồi ngẫu nhiên mới
             me.eatingSquare = me.randomSquare()
@@ -334,12 +282,76 @@ export default {
           }
 
           // thêm giá trị vừa thay đổi vào ô cuối cùng của mảng
-          oldActiveSquares.push(tempActiveSquare)
+          oldActiveSquares.push(newActiveSquare)
           me.activeSquares = oldActiveSquares
           // render lại game theo active mới
           me.renderGameGrid()
         }
       }
+    },
+    /**
+     * refactore code
+     * @author tdmanh1 11-05-2023
+     * @param newPosition vị trí mới mong muốn hiển thị
+     */
+    manipulateCoordinate(tempActiveSquare) {
+      let me = this
+      let newActiveSquare = { x: tempActiveSquare.x, y: tempActiveSquare.y }
+      if (tempActiveSquare) {
+        switch (me.movingPosition) {
+          // di chuyển lên
+          case gameConfig.position.up:
+            if (
+              tempActiveSquare.x != null &&
+              tempActiveSquare.x != undefined &&
+              tempActiveSquare.x > 0
+            ) {
+              newActiveSquare.x = tempActiveSquare.x - 1
+            } else {
+              newActiveSquare.x = me.gameSize - 1
+            }
+            break
+          // di chuyển sang trái
+          case gameConfig.position.left:
+            if (
+              tempActiveSquare.y != null &&
+              tempActiveSquare.y != undefined &&
+              tempActiveSquare.y > 0
+            ) {
+              newActiveSquare.y = tempActiveSquare.y - 1
+            } else {
+              newActiveSquare.y = me.gameSize - 1
+            }
+            break
+          // di chuyển xuống dưới
+          case gameConfig.position.down:
+            if (
+              tempActiveSquare.x != null &&
+              tempActiveSquare.x != undefined &&
+              tempActiveSquare.x < me.gameSize - 1
+            ) {
+              newActiveSquare.x = tempActiveSquare.x + 1
+            } else {
+              newActiveSquare.x = 0
+            }
+            break
+          // di chuyển sang phải
+          case gameConfig.position.right:
+            if (
+              tempActiveSquare.y != null &&
+              tempActiveSquare.y != undefined &&
+              tempActiveSquare.y < me.gameSize - 1
+            ) {
+              newActiveSquare.y = tempActiveSquare.y + 1
+            } else {
+              newActiveSquare.y = 0
+            }
+            break
+          default:
+            break
+        }
+      }
+      return newActiveSquare
     }
   }
 }
