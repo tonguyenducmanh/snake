@@ -149,9 +149,7 @@ export default {
         me.isGameOver = false
       }
       // thay đổi trạng thái của game
-      if (me.isPaused != null && me.isPaused != undefined) {
-        me.isPaused = !me.isPaused
-      }
+      me.isPaused = !me.isPaused
       // thực hiện tạm dừng hoặc tiếp tục game
       if (me.isPaused) {
         me.changeIntervalGame()
