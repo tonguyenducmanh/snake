@@ -55,7 +55,7 @@ export default {
     // hướng di chuyển hiện tại của con rắn
     currentPosition: {
       type: Number,
-      default: null
+      default: gameConfig.position.right
     }
   },
   computed: {
@@ -113,7 +113,12 @@ export default {
       ) {
         me.movingPosition = newValue
       } else {
-        me.movingPosition = oldValue
+        // case xem lan di chuyen dau neu khong co thi phai set the nay
+        if (oldValue) {
+          me.movingPosition = oldValue
+        } else {
+          me.movingPosition = newValue
+        }
       }
     },
     /**
