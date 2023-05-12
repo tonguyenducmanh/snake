@@ -62,6 +62,8 @@ export default {
      */
     changeGameSize(isIncrease) {
       let me = this
+      // thay doi size game la reset store
+      me.newScore = 0
       if (!isIncrease) {
         if (me.emitGameSize > gameConfig.gameSize.minSize) {
           me.emitGameSize--

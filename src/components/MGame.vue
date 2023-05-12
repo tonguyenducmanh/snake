@@ -190,10 +190,23 @@ export default {
           me.activeSquares = []
           // tạo ra 1 ô active ngẫu nhiên
           me.activeSquares.push(me.randomSquare())
-          // tạo ra ô rắn săn mồi ngẫu nhiên
-          me.eatingSquare = me.randomSquare()
+          me.generateGameEating()
         }
         me.renderGameGrid()
+      }
+    },
+    /**
+     * tao ra o de an moi
+     * @author tdmanh1 09-05-2023
+     */
+    generateGameEating() {
+      let me = this
+      // tạo ra ô rắn săn mồi ngẫu nhiên
+      me.eatingSquare = me.randomSquare()
+      if (me.activeSquares && me.gameSize && me.activeSquares.length != me.gameSize * me.gameSize) {
+        while (me.checkIncludeSquare(me.activeSquares, me.eatingSquare)) {
+          me.eatingSquare = me.randomSquare()
+        }
       }
     },
     /**
@@ -300,7 +313,7 @@ export default {
             newActiveSquare.y == me.eatingSquare.y
           ) {
             // tạo ra ô rắn săn mồi ngẫu nhiên mới
-            me.eatingSquare = me.randomSquare()
+            me.generateGameEating()
             // tang diem cho game
             me.$emit('changeScore', 1)
           } else {
@@ -396,14 +409,14 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border: 1px solid white;
+  border: 1px solid rgba(255, 255, 255, 0.074);
   /* background-color: cadetblue; */
   display: grid;
   grid-template-columns: repeat(gameSize, 1fr);
 }
 .m-cube {
   display: flex;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.074);
 }
 .m-cube-active {
   background-color: white;
