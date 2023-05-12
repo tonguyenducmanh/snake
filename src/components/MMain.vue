@@ -10,12 +10,14 @@
         :gameSize="emitGameSize"
         :currentPosition="currentPosition"
         :gameSpeed="emitGameSpeed"
+        @changeScore="changeScore"
       />
       <!-- phần thông tin bên dưới của trò chơi -->
       <m-board-vue
         @changeGameSize="changeGameSize"
         @changePosition="changePosition"
         @changeGameSpeed="changeGameSpeed"
+        :score="newScore"
       />
     </div>
   </div>
@@ -33,7 +35,8 @@ export default {
     return {
       emitGameSize: gameConfig.gameSize.defaultSize, // gameSize được thay đổi
       emitGameSpeed: gameConfig.timeRerender.defaultSpeed, // gameSize được thay đổi
-      currentPosition: null // hướng di chuyển hiện tại của con rắn
+      currentPosition: null, // hướng di chuyển hiện tại của con rắn
+      newScore: 0 // diem cua tro choi
     }
   },
   methods: {
@@ -69,9 +72,24 @@ export default {
         }
       }
     },
+    /**
+     * thay doi vi tri game
+     */
     changePosition(value) {
       let me = this
       me.currentPosition = value
+    },
+    /**
+     * thay doi score cua game
+     * @author tdmanh1 12-05-2023
+     */
+    changeScore(value) {
+      let me = this
+      if (value) {
+        me.newScore++
+      } else {
+        me.newScore = 0
+      }
     }
   }
 }

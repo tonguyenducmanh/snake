@@ -285,6 +285,8 @@ export default {
           // set trang thai game la isGameOver = true
           me.pauseGame()
           me.isGameOver = true
+          // reset diem game
+          me.$emit('changeScore', 0)
         } else {
           // kiểm tra xem ô tiếp theo là ô ăn hay không
           // nếu là ô ăn thì không xóa ô cuối cùng đi
@@ -296,6 +298,8 @@ export default {
           ) {
             // tạo ra ô rắn săn mồi ngẫu nhiên mới
             me.eatingSquare = me.randomSquare()
+            // tang diem cho game
+            me.$emit('changeScore', 1)
           } else {
             // xóa ô đầu tiên đi nếu không ăn được thêm ô nào
             oldActiveSquares.shift()

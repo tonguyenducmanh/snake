@@ -39,9 +39,14 @@
 <script>
 import gameConfig from '../config/gameConfig.js'
 export default {
+  props: {
+    score: {
+      type: Number,
+      default: 0
+    } // điểm hiện tại của trò chơi
+  },
   data() {
     return {
-      score: 0, // điểm hiện tại của trò chơi
       gameSize: gameConfig.gameSize.defaultSize, // kích cỡ của trò chơi hiện tại
       gameConfig: gameConfig,
       isSetting: false // bien kiem soat viec co phai dang bat man hinh setting cua game khong
