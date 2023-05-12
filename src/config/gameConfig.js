@@ -2,7 +2,7 @@ export default {
   // kích cỡ của game
   gameSize: {
     minSize: 3, // size game nhỏ nhất
-    maxSize: 50, // size game lớn nhất
+    maxSize: 20, // size game lớn nhất
     defaultSize: 7 // size game mặc định
   },
   // hướng di chuyển
