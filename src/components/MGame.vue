@@ -78,9 +78,7 @@ export default {
     me.generateGameGrid(true)
     me.changeIntervalGame(true)
     // thêm lắng nghe sự kiện ấn phím
-    window.addEventListener('keydown', (e) => {
-      me.keyDownPauseGame(e)
-    })
+    window.addEventListener('keydown', me.keyDownPauseGame)
   },
 
   /**
@@ -91,7 +89,7 @@ export default {
     let me = this
     me.changeIntervalGame()
     // tdmanh1 13/05/2023 xóa sự kiện lắng nghe ấn phím
-    window.removeEventListener('keydown')
+    window.removeEventListener('keydown', me.keyDownPauseGame)
   },
   watch: {
     /**

@@ -55,19 +55,17 @@ export default {
   created() {
     // tdmanh1 13/05/2023 thêm sự kiện lắng nghe ấn phím
     let me = this
-    window.addEventListener('keydown', (e) => {
-      me.keyDownChangePosition(e)
-    })
+    window.addEventListener('keydown', me.keyDownChangePosition)
   },
   beforeUnmount() {
+    let me = this
     // tdmanh1 13/05/2023 xóa sự kiện lắng nghe ấn phím
-    window.removeEventListener('keydown')
+    window.removeEventListener('keydown', me.keyDownChangePosition)
   },
   methods: {
     keyDownChangePosition(e) {
       let me = this
       if (e && e.keyCode) {
-        console.log(e.key.toString() + '  ' + e.keyCode.toString())
         switch (e.keyCode) {
           case gameConfig.keyCode.w:
           case gameConfig.keyCode.up:
