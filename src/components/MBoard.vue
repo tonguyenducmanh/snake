@@ -52,7 +52,45 @@ export default {
       isSetting: false // bien kiem soat viec co phai dang bat man hinh setting cua game khong
     }
   },
+  created() {
+    // tdmanh1 13/05/2023 thêm sự kiện lắng nghe ấn phím
+    let me = this
+    window.addEventListener('keydown', (e) => {
+      me.keyDownChangePosition(e)
+    })
+  },
+  beforeUnmount() {
+    // tdmanh1 13/05/2023 xóa sự kiện lắng nghe ấn phím
+    window.removeEventListener('keydown')
+  },
   methods: {
+    keyDownChangePosition(e) {
+      let me = this
+      if (e && e.keyCode) {
+        console.log(e.key.toString() + '  ' + e.keyCode.toString())
+        switch (e.keyCode) {
+          case gameConfig.keyCode.w:
+          case gameConfig.keyCode.up:
+            me.changePosition(gameConfig.position.up)
+            break
+          case gameConfig.keyCode.s:
+          case gameConfig.keyCode.down:
+            me.changePosition(gameConfig.position.down)
+            break
+          case gameConfig.keyCode.a:
+          case gameConfig.keyCode.left:
+            me.changePosition(gameConfig.position.left)
+            break
+          case gameConfig.keyCode.d:
+          case gameConfig.keyCode.right:
+            me.changePosition(gameConfig.position.right)
+            break
+          default:
+            break
+        }
+      }
+    },
+
     /**
      * method tăng, giảm size của game lên 1 đơn vị
      * @author tdmanh1 09-05-2023

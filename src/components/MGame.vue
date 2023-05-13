@@ -77,7 +77,12 @@ export default {
     let me = this
     me.generateGameGrid(true)
     me.changeIntervalGame(true)
+    // thêm lắng nghe sự kiện ấn phím
+    window.addEventListener('keydown', (e) => {
+      me.keyDownPauseGame(e)
+    })
   },
+
   /**
    * clear cac su kien duoc mount vao dom
    * @author tdmanh1 10-05-2023
@@ -85,6 +90,8 @@ export default {
   beforeUnmount() {
     let me = this
     me.changeIntervalGame()
+    // tdmanh1 13/05/2023 xóa sự kiện lắng nghe ấn phím
+    window.removeEventListener('keydown')
   },
   watch: {
     /**
@@ -130,6 +137,23 @@ export default {
     }
   },
   methods: {
+    /**
+     * lắng nghe sự kiện ấn phím
+     * @author tdmanh1 10-05-2023
+     */
+    keyDownPauseGame(e) {
+      let me = this
+      if (e && e.keyCode) {
+        switch (e.keyCode) {
+          case gameConfig.keyCode.space:
+          case gameConfig.keyCode.enter:
+            me.pauseGame()
+            break
+          default:
+            break
+        }
+      }
+    },
     /**
      * hàm chung xóa và thêm interval
      * @author tdmanh1 10-05-2023

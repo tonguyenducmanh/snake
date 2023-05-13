@@ -17,5 +17,18 @@ export default {
     defaultSpeed: 100, // thời gian mặc định
     minSpeed: 200, // thời gian chậm nhất
     maxSpeed: 40 // thời gian nhanh nhất
+  },
+  // keycode dùng để lắng nghe các phím trên bàn phím
+  keyCode: {
+    w: 87,
+    s: 83,
+    a: 65,
+    d: 68,
+    up: 38,
+    left: 37,
+    right: 39,
+    down: 40,
+    space: 32,
+    enter: 13
   }
 }
